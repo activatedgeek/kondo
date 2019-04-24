@@ -1,6 +1,8 @@
 # Kondo
 
-> Does your experiment spark joy?
+![Marie Kondo Spark Joy](https://i.imgflip.com/2zdobd.jpg)
+
+The name is inspired by [Marie Kondo](https://konmari.com)'s tidying adventures.
 
 Throw away experiments that don't spark joy with this tiny framework agnostic
 module.
