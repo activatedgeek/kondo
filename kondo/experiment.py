@@ -6,6 +6,15 @@ import torch
 from tensorboardX import SummaryWriter
 
 
+class Nop:
+  """A NOP class. Give it anything."""
+  def nop(self, *args, **kwargs):
+    pass
+
+  def __getattr__(self, _):
+    return self.nop
+
+
 class Experiment:
   def __init__(self,
                name=None,
@@ -44,12 +53,20 @@ class Experiment:
     return self._logging.get('tb_dir')
 
   @property
+  def log_interval(self):
+    return self._logging.get('log_int')
+
+  @property
   def ckpt_dir(self):
     return self._logging.get('ckpt_dir')
 
   @property
+  def save_interval(self):
+    return self._logging.get('ckpt_int')
+
+  @property
   def tb(self):
-    return self._logging.get('tb')
+    return self._logging.get('tb', Nop())
 
   def _set_seeds(self, seed):
     if seed:
