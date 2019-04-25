@@ -31,11 +31,10 @@ class Experiment:
     self.dev = torch.device('cuda' if self.cuda else 'cpu')
 
     self._logging = self._prep_workspace(log_dir, log_int, ckpt_int)
-    self.init_logger()
+    self._init_logger()
 
-  def init_logger(self):
-    if self.log_dir:
-      self._logging['tb'] = SummaryWriter(self.log_dir)
+  def run():
+    raise NotImplementedError
 
   @classmethod
   def load(exp_cls, config_file):
@@ -67,6 +66,10 @@ class Experiment:
       np.random.seed(seed)
       random.seed(seed)
     return seed
+
+  def _init_logger(self):
+    if self.log_dir:
+      self._logging['tb'] = SummaryWriter(self.log_dir)
 
   def _prep_workspace(self, log_dir, log_int=100, ckpt_int=100):
     logging = {
