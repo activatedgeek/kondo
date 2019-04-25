@@ -37,11 +37,12 @@ setup(name='kondo',
       author='Sanyam Kapoor',
       license='Apache License 2.0',
       classifiers=[
-          'Development Status :: 4 - Beta',
+          'Development Status :: 3 - Alpha',
           'Intended Audience :: Developers',
           'Intended Audience :: Science/Research',
           'License :: OSI Approved :: Apache Software License',
           'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
           'Topic :: Scientific/Engineering :: Artificial Intelligence',
       ],
       packages=find_packages(exclude=[

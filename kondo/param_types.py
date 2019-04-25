@@ -35,8 +35,11 @@ class UniformType(ParamType):
 
 
 class LogUniformType(UniformType):
+  def __init__(self, low=0.0, high=1.0):
+    super().__init__(low=np.log(low), high=np.log(high))
+
   def sample(self, size=1):
-    return np.exp(super(LogUniformType, self).sample(size=size))
+    return np.exp(super().sample(size=size))
 
 
 class NormalType(ParamType):

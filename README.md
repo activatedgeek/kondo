@@ -25,7 +25,7 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
 
   class MyExp(Experiment):
     def __init__(self, foo=100, bar='c', **kwargs):
-      super(MyExp, self).__init__(**kwargs)
+      super().__init__(**kwargs)
       self.foo = foo
       self.bar = bar
 
