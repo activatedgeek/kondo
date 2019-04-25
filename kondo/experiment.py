@@ -20,7 +20,7 @@ class Experiment:
                name=None,
                seed=None,
                cuda=True,
-               ws_dir=None,
+               log_dir=None,
                log_int=100,
                ckpt_int=100):
 
@@ -30,12 +30,12 @@ class Experiment:
     self.cuda = bool(cuda) and torch.cuda.is_available()
     self.dev = torch.device('cuda' if self.cuda else 'cpu')
 
-    self._logging = self._prep_workspace(ws_dir, log_int, ckpt_int)
+    self._logging = self._prep_workspace(log_dir, log_int, ckpt_int)
     self.init_logger()
 
   def init_logger(self):
-    if self.tb_dir:
-      self._logging['tb'] = SummaryWriter(self.tb_dir)
+    if self.log_dir:
+      self._logging['tb'] = SummaryWriter(self.log_dir)
 
   @classmethod
   def load(exp_cls, config_file):
@@ -45,23 +45,15 @@ class Experiment:
     return exp_cls(**config)
 
   @property
-  def ws_dir(self):
-    return self._logging.get('ws_dir')
-
-  @property
-  def tb_dir(self):
-    return self._logging.get('tb_dir')
+  def log_dir(self):
+    return self._logging.get('log_dir')
 
   @property
   def log_interval(self):
     return self._logging.get('log_int')
 
   @property
-  def ckpt_dir(self):
-    return self._logging.get('ckpt_dir')
-
-  @property
-  def save_interval(self):
+  def ckpt_interval(self):
     return self._logging.get('ckpt_int')
 
   @property
@@ -76,21 +68,16 @@ class Experiment:
       random.seed(seed)
     return seed
 
-  def _prep_workspace(self, ws_dir, log_int=100, ckpt_int=100):
+  def _prep_workspace(self, log_dir, log_int=100, ckpt_int=100):
     logging = {
       'log_int': log_int,
       'ckpt_int': ckpt_int,
     }
 
-    if ws_dir:
-      ws_dir = os.path.abspath(ws_dir)
-      logging['ws_dir'] = ws_dir
-      logging['tb_dir'] = os.path.join(ws_dir, 'tb')
-      logging['wandb_dir'] = os.path.join(ws_dir, 'ckpt')
-      logging['ckpt_dir'] = os.path.join(ws_dir, 'ckpt')
+    if log_dir:
+      log_dir = os.path.abspath(log_dir)
+      logging['log_dir'] = log_dir
 
-      os.makedirs(logging['tb_dir'], exist_ok=True)
-      os.makedirs(logging['wandb_dir'], exist_ok=True)
-      os.makedirs(logging['ckpt_dir'], exist_ok=True)
+      os.makedirs(logging['log_dir'], exist_ok=True)
 
     return logging
