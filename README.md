@@ -11,10 +11,6 @@ module.
 
 ## Installation
 
-### PyPI
-
-TODO.
-
 ### Source
 
 ```
@@ -25,7 +21,7 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
 
 * Create new `Experiment` class
   ```python
-  from kondo import Experiment
+  from kondo import Experiment, RandIntType, ChoiceType
 
   class MyExp(Experiment):
     def __init__(self, foo=100, bar='c', **kwargs):
@@ -35,20 +31,21 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
 
     def run(self):
       print('Running experiment with foo={}, bar={}!'.format(self.foo, self.bar))
+
+    @property
+    def spec_list(self):
+      return [
+        ('def', dict(foo=RandIntType(low=10, high=100), bar=ChoiceType(['a', 'b', 'c'])))
+      ]
   ```
   Make sure to capture all keyword arguments to the super class using `**kwargs`
   as above.
 
 * Create `Hyperparameter` spec
   ```python
-  from kondo import HParams, RandIntType, ChoiceType
-
-  spec = dict(
-    foo=RandIntType(low=10, high=100),
-    bar=ChoiceType(['a', 'b', 'c']),
-  )
+  from kondo import HParams
   
-  hparams = HParams(MyExp, spec)
+  hparams = HParams(MyExp)
   ```
   `HParams` class automagically recognizes all the possible parameters to the
   experiment specified as arguments to the constructor with default values. The

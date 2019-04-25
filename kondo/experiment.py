@@ -5,6 +5,7 @@ import numpy as np
 import torch
 from tensorboardX import SummaryWriter
 
+from .hparams import HParams
 
 class Nop:
   """A NOP class. Give it anything."""
@@ -37,11 +38,26 @@ class Experiment:
     raise NotImplementedError
 
   @classmethod
-  def load(exp_cls, config_file):
-    with open(config_file, 'r') as f:
-      config = yaml.safe_load(f)
+  def generate(exp_cls, trials_dir, n_trials=0):
+    if n_trials:
+      hparams = HParams(exp_cls)
+      hparams.save_trials(trials_dir, num=n_trials)
 
-    return exp_cls(**config)
+  @classmethod
+  def load(exp_cls, trial_file, run=False):
+    with open(trial_file, 'r') as f:
+      trial = yaml.safe_load(f)
+
+    if not run:
+      return trial
+
+    exp = exp_cls(**trial)
+    exp.run()
+
+  @staticmethod
+  def spec_list():
+    # return []
+    raise NotImplementedError
 
   @property
   def log_dir(self):

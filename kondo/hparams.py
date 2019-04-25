@@ -7,10 +7,9 @@ from .param_types import ParamType
 
 
 class HParams:
-  def __init__(self, exp_class, spec):
+  def __init__(self, exp_class):
     self.exp_class = exp_class
     self._hparams = self.prep(exp_class)
-    self._spec = spec
 
   @property
   def hparams(self):
@@ -32,22 +31,25 @@ class HParams:
       return trial
 
   def trials(self, num=1):
-    rvs = {
-      k: v.sample(size=num).tolist() if isinstance(v, ParamType) else v
-      for k, v in self._spec.items()
-    }
+    for label, spec in self.exp_class.spec_list():
+      rvs = {
+        k: v.sample(size=num).tolist() if isinstance(v, ParamType) else v
+        for k, v in spec.items()
+      }
 
-    for t in range(num):
-      t_rvs = {k: v[t] if isinstance(v, list) else v
-               for k, v in rvs.items()}
+      for t in range(num):
+        t_rvs = {k: v[t] if isinstance(v, list) else v
+                for k, v in rvs.items()}
 
-      yield {**self._hparams, **t_rvs}
+        t_rvs['name'] = label
+
+        yield {**self._hparams, **t_rvs}
 
   def save_trials(self, trials_dir, num=1):
     trials_dir = os.path.abspath(trials_dir)
     os.makedirs(trials_dir, exist_ok=True)
     for trial in self.trials(num=num):
-      name = '{}-{}'.format(self.exp_class.__name__, time.time())
+      name = '{}-{}-{}'.format(self.exp_class.__name__, trial['name'], time.time())
       t_dir = os.path.join(trials_dir, name)
       
       os.makedirs(t_dir, exist_ok=True)
