@@ -34,7 +34,7 @@ class UniformType(ParamType):
     return np.random.uniform(self.low, self.high, size=size)
 
 
-class LogUniformType(ParamType):
+class LogUniformType(UniformType):
   def sample(self, size=1):
     return np.exp(super(LogUniformType, self).sample(size=size))
 
