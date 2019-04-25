@@ -1,5 +1,7 @@
 # Kondo
 
+![Alpha](https://img.shields.io/badge/status-alpha-blue.svg)
+
 ![Marie Kondo Spark Joy](https://i.imgflip.com/2zdobd.jpg)
 
 The name is inspired by [Marie Kondo](https://konmari.com)'s tidying adventures.
@@ -72,10 +74,26 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
   Running experiment with foo=75, bar="c".
   ```
 
-  Now, you can keep tuning the spec during your hyperparameter search and *throw
-  away the ones that don't spark joy!*.
+* We can alternatively save this configurations for later use and load the experiment
+  later. We extend the above example by making the following calls
+  ```python
+  # Save trials instead of running
+  trials_dir = os.path.join(os.path.dirname(__file__), '.trials')
+  hparams.save_trials(trials_dir, num=3)
+  ```
 
-  The full example file is available at [basic.py](./examples/basic.py).
+  We then load all of the saved trials from the `YAML` files.
+  ```python
+  for fname in os.listdir(trials_dir):
+    fname = os.path.join(trials_dir, fname)
+    trial = MyExp.load(fname)
+    trial.run()
+  ```
+
+Now, you can keep tuning the spec during your hyperparameter search and *throw
+away the ones that don't spark joy*!.
+
+The full example file is available at [basic.py](./examples/basic.py).
 
 ## License
 

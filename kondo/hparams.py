@@ -1,4 +1,7 @@
+import os
 import inspect
+from ruamel import yaml
+
 from .param_types import ParamType
 
 
@@ -37,3 +40,10 @@ class HParams:
                for k, v in rvs.items()}
 
       yield {**self._hparams, **t_rvs}
+
+  def save_trials(self, trial_dir, num=1):
+    os.makedirs(trial_dir, exist_ok=True)
+    for i, trial in enumerate(self.trials(num=num)):
+      with open(os.path.join(trial_dir, '{}.yaml'.format(i)), 'w') as f:
+        yaml.safe_dump(trial, stream=f,
+                       default_flow_style=False)

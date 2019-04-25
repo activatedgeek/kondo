@@ -124,3 +124,6 @@ dmypy.json
 
 # VSCODE
 .vscode/
+
+# Weights & Biases
+wandb/

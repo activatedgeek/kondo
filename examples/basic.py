@@ -1,3 +1,4 @@
+import os
 from kondo import Experiment, HParams, RandIntType, ChoiceType
 
 
@@ -19,6 +20,10 @@ if __name__ == "__main__":
   
   hparams = HParams(MyExp, spec)
 
-  for trial in hparams.trials(num=3):
-    exp = MyExp(**trial)
-    exp.run()
+  trials_dir = os.path.join(os.path.dirname(__file__), '.trials')
+  hparams.save_trials(trials_dir, num=3)
+
+  for fname in os.listdir(trials_dir):
+    fname = os.path.join(trials_dir, fname)
+    trial = MyExp.load(fname)
+    trial.run()
