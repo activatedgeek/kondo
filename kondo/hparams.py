@@ -31,7 +31,7 @@ class HParams:
       return trial
 
   def trials(self, num=1):
-    for label, spec in self.exp_class.spec_list():
+    for group, spec in self.exp_class.spec_list():
       rvs = {
         k: v.sample(size=num).tolist() if isinstance(v, ParamType) else v
         for k, v in spec.items()
@@ -41,19 +41,18 @@ class HParams:
         t_rvs = {k: v[t] if isinstance(v, list) else v
                 for k, v in rvs.items()}
 
-        t_rvs['name'] = label
-
-        yield {**self._hparams, **t_rvs}
+        yield {**self._hparams, **t_rvs}, group
 
   def save_trials(self, trials_dir, num=1):
     trials_dir = os.path.abspath(trials_dir)
     os.makedirs(trials_dir, exist_ok=True)
-    for trial in self.trials(num=num):
-      name = '{}-{}-{}'.format(self.exp_class.__name__, trial['name'], time.time())
+    for trial, group in self.trials(num=num):
+      name = '{}-{}-{}'.format(self.exp_class.__name__, group, time.time())
       t_dir = os.path.join(trials_dir, name)
       
       os.makedirs(t_dir, exist_ok=True)
       with open(os.path.join(t_dir, 'trial.yaml'), 'w') as f:
         trial['name'] = name
         trial['log_dir'] = t_dir
+        trial['group'] = group
         yaml.safe_dump(trial, stream=f, default_flow_style=False)
