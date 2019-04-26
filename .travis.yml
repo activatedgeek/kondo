@@ -21,12 +21,13 @@ jobs:
         - "3.7"
       script:
         - pip install . -q
+        - python examples/basic.py
 
     - stage: deploy
       python:
         - "3.7"
       script:
-        - pip install . -q
+        - true
       before_deploy:
         - echo "$TRAVIS_TAG" > VERSION
       deploy:
