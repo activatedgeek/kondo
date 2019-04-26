@@ -37,7 +37,7 @@ setup(name='kondo',
       author='Sanyam Kapoor',
       license='Apache License 2.0',
       classifiers=[
-          'Development Status :: 3 - Alpha',
+          'Development Status :: 4 - Beta',
           'Intended Audience :: Developers',
           'Intended Audience :: Science/Research',
           'License :: OSI Approved :: Apache Software License',

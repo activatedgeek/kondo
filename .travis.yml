@@ -1,0 +1,35 @@
+language: python
+
+cache:
+  pip: true
+
+stages:
+  - name: test
+    if: (branch = master) OR (type = pull_request AND head_branch = master)
+  - name: deploy
+    if: (tag IS present) OR (branch = master) OR (type = pull_request AND head_branch = master)
+
+jobs:
+  include:
+
+    - stage: test
+      python:
+        - "3.6"
+        - "3.7"
+      script:
+        - pip install .
+
+    - stage: deploy
+      python:
+        - "3.7"
+      script:
+        - pip install .
+      before_deploy:
+        - echo "$TRAVIS_TAG" > VERSION
+      deploy:
+        provider: pypi
+        user: $PYPI_USERNAME
+        password: $PYPI_PASSWORD
+        skip_cleanup: true
+        on:
+          tags: true

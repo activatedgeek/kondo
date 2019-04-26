@@ -1,6 +1,10 @@
 # Kondo
 
-![Alpha](https://img.shields.io/badge/status-alpha-blue.svg)
+[![Build Status](https://travis-ci.com/activatedgeek/kondo.svg?branch=master)](https://travis-ci.com/activatedgeek/kondo)
+[![PyPI version](https://badge.fury.io/py/kondo.svg)](https://pypi.org/project/kondo/)
+![Alpha](https://img.shields.io/badge/status-beta-orange.svg)
+[![Python 3.6](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/release/python-360/)
+
 
 ![Marie Kondo Spark Joy](https://i.imgflip.com/2zdobd.jpg)
 
@@ -11,11 +15,19 @@ module.
 
 ## Installation
 
+### PyPI
+
+```
+pip install kondo
+```
+
 ### Source
 
 ```
 pip install git+https://github.com/activatedgeek/kondo.git@master
 ```
+
+**NOTE**: Prefer pinning to a reference than the master branch for unintended updates.
 
 ## Usage
 
