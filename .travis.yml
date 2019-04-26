@@ -1,3 +1,4 @@
+dist: xenial
 language: python
 
 cache:
@@ -19,13 +20,13 @@ jobs:
         - "3.6"
         - "3.7"
       script:
-        - pip install . --quiet
+        - pip install . -q
 
     - stage: deploy
       python:
         - "3.7"
       script:
-        - pip install . --quiet
+        - pip install . -q
       before_deploy:
         - echo "$TRAVIS_TAG" > VERSION
       deploy:
