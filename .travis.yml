@@ -9,6 +9,8 @@ stages:
   - name: deploy
     if: (tag IS present) OR (branch = master) OR (type = pull_request AND head_branch = master)
 
+install: true
+
 jobs:
   include:
 
@@ -17,13 +19,13 @@ jobs:
         - "3.6"
         - "3.7"
       script:
-        - pip install .
+        - pip install . --quiet
 
     - stage: deploy
       python:
         - "3.7"
       script:
-        - pip install .
+        - pip install . --quiet
       before_deploy:
         - echo "$TRAVIS_TAG" > VERSION
       deploy:
