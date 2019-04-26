@@ -42,12 +42,15 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
       self.bar = bar
 
     def run(self):
-      print('Running experiment with foo={}, bar={}!'.format(self.foo, self.bar))
+      print('Running experiment with foo={}, bar="{}".'.format(self.foo, self.bar))
 
-    @property
-    def spec_list(self):
+    @staticmethod
+    def spec_list():
       return [
-        ('def', dict(foo=RandIntType(low=10, high=100), bar=ChoiceType(['a', 'b', 'c'])))
+        ('example', dict(
+          foo=RandIntType(low=10, high=100),
+          bar=ChoiceType(['a', 'b', 'c']),
+        ))
       ]
   ```
   Make sure to capture all keyword arguments to the super class using `**kwargs`
@@ -68,7 +71,7 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
 
 * Generate trials and create a new experiment each time
   ```python
-  for trial in hparams.trials(num=3):
+  for trial, _ in hparams.trials(num=3):
     exp = MyExp(**trial)
     exp.run()
   ```
@@ -84,19 +87,23 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
   ```
 
 * We can alternatively save this configurations for later use and load the experiment
-  later. We extend the above example by making the following calls
+  on demand. We extend the above example by making the following calls
   ```python
-  # Save trials instead of running
-  trials_dir = os.path.join(os.path.dirname(__file__), '.trials')
+  import os
+
+  trials_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '.trials')
   hparams.save_trials(trials_dir, num=3)
   ```
 
   We then load all of the saved trials from the `YAML` files.
   ```python
-  for fname in os.listdir(trials_dir):
-    fname = os.path.join(trials_dir, fname)
-    trial = MyExp.load(fname)
-    trial.run()
+  import glob
+
+  for fname in glob.glob('{}/**/trial.yaml'.format(trials_dir)):
+    trial, _ = MyExp.load(fname, run=False)
+
+    exp = MyExp(**trial)
+    exp.run()
   ```
 
 Now, you can keep tuning the spec during your hyperparameter search and *throw

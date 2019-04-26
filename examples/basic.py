@@ -1,4 +1,5 @@
 import os
+import glob
 from kondo import Experiment, HParams, RandIntType, ChoiceType
 
 
@@ -11,19 +12,30 @@ class MyExp(Experiment):
   def run(self):
     print('Running experiment with foo={}, bar="{}".'.format(self.foo, self.bar))
 
+  @staticmethod
+  def spec_list():
+    return [
+      ('example', dict(
+        foo=RandIntType(low=10, high=100),
+        bar=ChoiceType(['a', 'b', 'c']),
+      ))
+    ]
 
 if __name__ == "__main__":
-  spec = dict(
-    foo=RandIntType(low=10, high=100),
-    bar=ChoiceType(['a', 'b', 'c']),
-  )
-  
-  hparams = HParams(MyExp, spec)
+  hparams = HParams(MyExp)
 
-  trials_dir = os.path.join(os.path.dirname(__file__), '.trials')
+  print('Generating trials online')
+  for trial, _ in hparams.trials(num=3):
+    exp = MyExp(**trial)
+    exp.run()
+
+  print('Saving trials to file.')
+  trials_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '.trials')
   hparams.save_trials(trials_dir, num=3)
 
-  for fname in os.listdir(trials_dir):
-    fname = os.path.join(trials_dir, fname)
-    trial = MyExp.load(fname)
-    trial.run()
+  print('Run pre-generated trials.')
+  for fname in glob.glob('{}/**/trial.yaml'.format(trials_dir)):
+    trial, _ = MyExp.load(fname, run=False)
+
+    exp = MyExp(**trial)
+    exp.run()
