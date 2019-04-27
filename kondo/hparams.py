@@ -2,6 +2,7 @@ import os
 import time
 import inspect
 from ruamel import yaml
+from typing import Generator, Tuple
 
 from .param_types import ParamType
 
@@ -12,25 +13,25 @@ class HParams:
     self._hparams = self.prep(exp_class)
 
   @property
-  def hparams(self):
+  def hparams(self) -> dict:
     return self._hparams
 
   @staticmethod
-  def prep(cls):
+  def prep(cls) -> dict:
     attribs = {}
 
     for sup_c in type.mro(cls)[::-1]:
-      argspec = inspect.getargspec(getattr(sup_c, '__init__'))
+      argspec = inspect.getfullargspec(getattr(sup_c, '__init__'))
       argsdict = dict(dict(zip(argspec.args[1:], argspec.defaults or [])))
       attribs = {**attribs, **argsdict}
     
     return attribs
 
-  def sample(self):
+  def sample(self) -> Tuple[dict, str]:
     for trial in self.trials():
       return trial
 
-  def trials(self, num=1):
+  def trials(self, num=1) -> Generator[Tuple[dict, str], None, None]:
     for group, spec in self.exp_class.spec_list():
       rvs = {
         k: v.sample(size=num).tolist() if isinstance(v, ParamType) else v
@@ -43,7 +44,7 @@ class HParams:
 
         yield {**self._hparams, **t_rvs}, group
 
-  def save_trials(self, trials_dir, num=1):
+  def save_trials(self, trials_dir: str, num: int = 1):
     trials_dir = os.path.abspath(trials_dir)
     os.makedirs(trials_dir, exist_ok=True)
     for trial, group in self.trials(num=num):
