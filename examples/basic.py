@@ -15,7 +15,7 @@ class MyExp(Experiment):
   @staticmethod
   def spec_list():
     return [
-      ('example', dict(
+      ('example', 3, dict(
         foo=RandIntType(low=10, high=100),
         bar=ChoiceType(['a', 'b', 'c']),
       ))
@@ -25,13 +25,13 @@ if __name__ == "__main__":
   hparams = HParams(MyExp)
 
   print('Generating trials online')
-  for trial, _ in hparams.trials(num=3):
+  for trial, _ in hparams.trials():
     exp = MyExp(**trial)
     exp.run()
 
   print('Saving trials to file.')
   trials_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '.trials')
-  hparams.save_trials(trials_dir, num=3)
+  hparams.save_trials(trials_dir)
 
   print('Run pre-generated trials.')
   for fname in glob.glob('{}/**/trial.yaml'.format(trials_dir)):

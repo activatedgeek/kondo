@@ -31,8 +31,8 @@ class HParams:
     for trial in self.trials():
       return trial
 
-  def trials(self, num=1) -> Generator[Tuple[dict, str], None, None]:
-    for group, spec in self.exp_class.spec_list():
+  def trials(self) -> Generator[Tuple[dict, str], None, None]:
+    for group, num, spec in self.exp_class.spec_list():
       rvs = {
         k: v.sample(size=num).tolist() if isinstance(v, ParamType) else v
         for k, v in spec.items()
@@ -44,10 +44,10 @@ class HParams:
 
         yield {**self._hparams, **t_rvs}, group
 
-  def save_trials(self, trials_dir: str, num: int = 1):
+  def save_trials(self, trials_dir: str):
     trials_dir = os.path.abspath(trials_dir)
     os.makedirs(trials_dir, exist_ok=True)
-    for trial, group in self.trials(num=num):
+    for trial, group in self.trials():
       name = '{}-{}-{}'.format(self.exp_class.__name__, group, time.time())
       t_dir = os.path.join(trials_dir, name)
       

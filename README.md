@@ -47,7 +47,7 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
     @staticmethod
     def spec_list():
       return [
-        ('example', dict(
+        ('example', 3, dict(
           foo=RandIntType(low=10, high=100),
           bar=ChoiceType(['a', 'b', 'c']),
         ))
@@ -71,7 +71,7 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
 
 * Generate trials and create a new experiment each time
   ```python
-  for trial, _ in hparams.trials(num=3):
+  for trial, _ in hparams.trials():
     exp = MyExp(**trial)
     exp.run()
   ```
@@ -92,7 +92,7 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
   import os
 
   trials_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '.trials')
-  hparams.save_trials(trials_dir, num=3)
+  hparams.save_trials(trials_dir)
   ```
 
   We then load all of the saved trials from the `YAML` files.

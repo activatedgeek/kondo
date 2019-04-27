@@ -1,7 +1,7 @@
 import os
 import random
 from ruamel import yaml
-from typing import Optional, Union
+from typing import Optional, Union, List, Tuple
 import numpy as np
 import torch
 from tensorboardX import SummaryWriter
@@ -39,10 +39,9 @@ class Experiment:
     raise NotImplementedError
 
   @classmethod
-  def generate(exp_cls, trials_dir: str, n_trials: int = 0):
-    if n_trials:
-      hparams = HParams(exp_cls)
-      hparams.save_trials(trials_dir, num=n_trials)
+  def generate(exp_cls, trials_dir: str):
+    hparams = HParams(exp_cls)
+    hparams.save_trials(trials_dir)
 
   @classmethod
   def load(exp_cls, trial_file: str, run: bool = False):
@@ -61,8 +60,11 @@ class Experiment:
     exp.run()
 
   @staticmethod
-  def spec_list():
-    # return []
+  def spec_list() -> List[Tuple[str, int, dict]]:
+    '''
+    A list of tuples contains group string, number of
+    trials, config dictionary. See examples.
+    '''
     raise NotImplementedError
 
   @property
