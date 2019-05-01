@@ -4,7 +4,7 @@ from ruamel import yaml
 from typing import Optional, Union, List, Tuple
 import numpy as np
 import torch
-from tensorboardX import SummaryWriter
+from torch.utils.tensorboard import SummaryWriter
 
 from .hparams import HParams
 

@@ -1,5 +1,7 @@
-tensorboardx>=1.6
-numpy>=1.15
-torch>=1.0
+future
+numpy
+ruamel.yaml
+Pillow
+torch>=1.1
 tensorflow>=1.13
-ruamel.yaml>=0.15
+tb-nightly
