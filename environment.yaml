@@ -10,6 +10,6 @@ dependencies:
   - ruamel.yaml
   - pillow
   - pytorch=1.1.*
-  - tensorflow=1.13.*
+  - tensorflow=1.*
   - pip:
     - tb-nightly
