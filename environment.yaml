@@ -4,12 +4,10 @@ channels:
   - pytorch
 dependencies:
   - python=3.7
-  - pip
   - future
   - numpy
   - ruamel.yaml
   - pillow
-  - pytorch=1.1.*
-  - tensorflow=1.*
-  - pip:
-    - tb-nightly
+  - pytorch=1.2.*
+  - tensorflow=1.14.*
+  - tensorboard=1.14.*

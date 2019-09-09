@@ -2,6 +2,5 @@ future
 numpy
 ruamel.yaml
 Pillow
-torch>=1.1
-tensorflow>=1.12
-tb-nightly
+torch>=1.2
+tensorflow>=1.14
