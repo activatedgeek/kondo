@@ -53,14 +53,9 @@ class Experiment:
   def load(exp_cls, trial_file: str, run: bool = False):
     with open(trial_file, 'r') as f:
       trial = yaml.safe_load(f)
-    
-    try:
-      group = trial.pop('group')
-    except KeyError:
-      group = None
 
     if not run:
-      return trial, group
+      return trial
 
     exp = exp_cls(**trial)
     exp.run()
