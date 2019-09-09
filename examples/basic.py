@@ -1,6 +1,9 @@
+# import warnings
+# warnings.filterwarnings('ignore', category=FutureWarning)
+
 import os
 import glob
-from kondo import Experiment, HParams, RandIntType, ChoiceType
+from kondo import Spec, Experiment, HParams, RandIntType, ChoiceType
 
 
 class MyExp(Experiment):
@@ -15,10 +18,14 @@ class MyExp(Experiment):
   @staticmethod
   def spec_list():
     return [
-      ('example', 3, dict(
-        foo=RandIntType(low=10, high=100),
-        bar=ChoiceType(['a', 'b', 'c']),
-      ))
+      Spec(
+        group='example',
+        params=dict(
+          foo=RandIntType(low=10, high=100),
+          bar=ChoiceType(['a', 'b', 'c'])
+        ),
+        n_trials=3,
+      )
     ]
 
 if __name__ == "__main__":

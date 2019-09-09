@@ -1,7 +1,7 @@
 import os
 import random
 from ruamel import yaml
-from typing import Optional, Union, List, Tuple
+from typing import Optional, Union, List, Tuple, NamedTuple
 import numpy as np
 import torch
 from torch.utils.tensorboard import SummaryWriter
@@ -15,6 +15,12 @@ class Nop:
 
   def __getattr__(self, _):
     return self.nop
+
+
+class Spec(NamedTuple):
+  group: str
+  params: dict
+  n_trials: int = 0
 
 
 class Experiment:
@@ -60,10 +66,11 @@ class Experiment:
     exp.run()
 
   @staticmethod
-  def spec_list() -> List[Tuple[str, int, dict]]:
+  def spec_list() -> List[Spec]:
     '''
-    A list of tuples contains group string, number of
-    trials, config dictionary. See examples.
+    A list of named-tuples containing name
+    of the spec, number of trials to generate
+    and an arbitrary parameter dictionary. See examples.
     '''
     raise NotImplementedError
 

@@ -32,17 +32,17 @@ class HParams:
       return trial
 
   def trials(self) -> Generator[Tuple[dict, str], None, None]:
-    for group, num, spec in self.exp_class.spec_list():
+    for spec in self.exp_class.spec_list():
       rvs = {
-        k: v.sample(size=num).tolist() if isinstance(v, ParamType) else v
-        for k, v in spec.items()
+        k: v.sample(size=spec.n_trials).tolist() if isinstance(v, ParamType) else v
+        for k, v in spec.params.items()
       }
 
-      for t in range(num):
+      for t in range(spec.n_trials):
         t_rvs = {k: v[t] if isinstance(v, list) else v
                 for k, v in rvs.items()}
 
-        yield {**self._hparams, **t_rvs}, group
+        yield {**self._hparams, **t_rvs}, spec.group
 
   def save_trials(self, trials_dir: str):
     trials_dir = os.path.abspath(trials_dir)
