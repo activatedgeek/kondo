@@ -95,7 +95,7 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
   import os
 
   trials_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '.trials')
-  for trial, _ in hparams.trials(trials_dir=trials_dir):
+  for trial in hparams.trials(trials_dir=trials_dir):
     # ...same as earlier
   ```
 
@@ -104,7 +104,7 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
   import glob
 
   for fname in glob.glob('{}/**/trial.yaml'.format(trials_dir)):
-    trial, _ = MyExp.load(fname, run=False)
+    trial = MyExp.load(fname, run=False)
 
     exp = MyExp(**trial)
     exp.run()
