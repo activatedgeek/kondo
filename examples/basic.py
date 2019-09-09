@@ -43,7 +43,6 @@ if __name__ == "__main__":
 
   print('Run pre-generated trials...')
   for fname in glob.glob('{}/**/trial.yaml'.format(trials_dir)):
-    trial = MyExp.load(fname, run=False)
+    exp = MyExp.load(fname)
 
-    exp = MyExp(**trial)
     exp.run()

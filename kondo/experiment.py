@@ -32,33 +32,13 @@ class Experiment:
                log_int: int = 100,
                ckpt_int: int = 100):
 
-    self.name = name
-    self.seed = self._set_seeds(seed)
+    self._name = name
+    self._seed = self._set_seeds(seed)
 
-    self.cuda = bool(cuda) and torch.cuda.is_available()
-    self.dev = torch.device('cuda' if self.cuda else 'cpu')
+    self._cuda = bool(cuda) and torch.cuda.is_available()
 
     self._logging = self._prep_workspace(log_dir, log_int, ckpt_int)
     self._init_logger()
-
-  def run():
-    raise NotImplementedError
-
-  @classmethod
-  def generate(exp_cls, trials_dir: str):
-    hparams = HParams(exp_cls)
-    hparams.save_trials(trials_dir)
-
-  @classmethod
-  def load(exp_cls, trial_file: str, run: bool = False):
-    with open(trial_file, 'r') as f:
-      trial = yaml.safe_load(f)
-
-    if not run:
-      return trial
-
-    exp = exp_cls(**trial)
-    exp.run()
 
   @staticmethod
   def spec_list() -> List[Spec]:
@@ -68,6 +48,21 @@ class Experiment:
     and an arbitrary parameter dictionary. See examples.
     '''
     raise NotImplementedError
+
+  def run():
+    raise NotImplementedError
+
+  @property
+  def name(self) -> Optional[str]:
+    return self._name
+  
+  @property
+  def seed(self) -> Optional[int]:
+    return self._seed
+
+  @property
+  def cuda(self) -> Optional[bool]:
+    return self._cuda
 
   @property
   def log_dir(self) -> Optional[str]:
@@ -84,6 +79,19 @@ class Experiment:
   @property
   def tb(self) -> Union[SummaryWriter, Nop]:
     return self._logging.get('tb', Nop())
+
+  @classmethod
+  def generate(exp_cls, trials_dir: str):
+    hparams = HParams(exp_cls)
+    hparams.save_trials(trials_dir)
+
+  @classmethod
+  def load(exp_cls, trial_file: str):
+    with open(trial_file, 'r') as f:
+      trial = yaml.safe_load(f)
+
+    exp = exp_cls(**trial)
+    return exp
 
   def _set_seeds(self, seed: Optional[int]) -> Optional[int]:
     if seed:

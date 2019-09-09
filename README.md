@@ -10,8 +10,7 @@
 
 The name is inspired by [Marie Kondo](https://konmari.com)'s tidying adventures.
 
-Throw away experiments that don't spark joy with this tiny framework agnostic
-module.
+Throw away experiments that don't spark joy with this tiny module.
 
 ## Installation
 
@@ -29,7 +28,7 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
 
 **NOTE**: Prefer pinning to a reference than the master branch for unintended updates.
 
-## Usage
+## Minimal Usage Example
 
 * Create new `Experiment` class
   ```python
@@ -114,6 +113,11 @@ Now, you can keep tuning the spec during your hyperparameter search and *throw
 away the ones that don't spark joy*!.
 
 The full example file is available at [basic.py](./examples/basic.py).
+
+## Advanced Usage
+
+See [Experiment](./kondo/experiment.py) object for other important attributes.
+The only thing to care about are `@property` annotated methods.
 
 ## License
 
