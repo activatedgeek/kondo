@@ -1,6 +1,10 @@
+# TODO(sanyam): Disables warnings from Tensorboard.
+import warnings
+warnings.filterwarnings('ignore', category=FutureWarning)
+
 import os
 import glob
-from kondo import Experiment, HParams, RandIntType, ChoiceType
+from kondo import Spec, Experiment, HParams, RandIntType, ChoiceType
 
 
 class MyExp(Experiment):
@@ -15,27 +19,30 @@ class MyExp(Experiment):
   @staticmethod
   def spec_list():
     return [
-      ('example', 3, dict(
-        foo=RandIntType(low=10, high=100),
-        bar=ChoiceType(['a', 'b', 'c']),
-      ))
+      Spec(
+        group='example',
+        params=dict(
+          foo=RandIntType(low=10, high=100),
+          bar=ChoiceType(['a', 'b', 'c'])
+        ),
+        n_trials=3,
+      )
     ]
 
 if __name__ == "__main__":
+  trials_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '.trials')
+
   hparams = HParams(MyExp)
 
-  print('Generating trials online')
-  for trial, _ in hparams.trials():
+  print('Generate trials online and save...')
+  for trial in hparams.trials(trials_dir=trials_dir):
     exp = MyExp(**trial)
     exp.run()
 
-  print('Saving trials to file.')
-  trials_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '.trials')
-  hparams.save_trials(trials_dir)
+  print()
 
-  print('Run pre-generated trials.')
+  print('Run pre-generated trials...')
   for fname in glob.glob('{}/**/trial.yaml'.format(trials_dir)):
-    trial, _ = MyExp.load(fname, run=False)
+    exp = MyExp.load(fname)
 
-    exp = MyExp(**trial)
     exp.run()

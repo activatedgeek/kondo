@@ -31,29 +31,30 @@ class HParams:
     for trial in self.trials():
       return trial
 
-  def trials(self) -> Generator[Tuple[dict, str], None, None]:
-    for group, num, spec in self.exp_class.spec_list():
+  def trials(self, trials_dir=None) -> Generator[dict, None, None]:
+    if trials_dir is not None:
+      trials_dir = os.path.abspath(trials_dir)
+      os.makedirs(trials_dir, exist_ok=True) 
+
+    for spec in self.exp_class.spec_list():
       rvs = {
-        k: v.sample(size=num).tolist() if isinstance(v, ParamType) else v
-        for k, v in spec.items()
+        k: v.sample(size=spec.n_trials).tolist() if isinstance(v, ParamType) else v
+        for k, v in spec.params.items()
       }
 
-      for t in range(num):
+      for t in range(spec.n_trials):
         t_rvs = {k: v[t] if isinstance(v, list) else v
                 for k, v in rvs.items()}
 
-        yield {**self._hparams, **t_rvs}, group
+        trial = {**self._hparams, **t_rvs}
 
-  def save_trials(self, trials_dir: str):
-    trials_dir = os.path.abspath(trials_dir)
-    os.makedirs(trials_dir, exist_ok=True)
-    for trial, group in self.trials():
-      name = '{}-{}-{}'.format(self.exp_class.__name__, group, time.time())
-      t_dir = os.path.join(trials_dir, name)
-      
-      os.makedirs(t_dir, exist_ok=True)
-      with open(os.path.join(t_dir, 'trial.yaml'), 'w') as f:
-        trial['name'] = name
-        trial['log_dir'] = t_dir
-        trial['group'] = group
-        yaml.safe_dump(trial, stream=f, default_flow_style=False)
+        if trials_dir is not None:
+          name = '{}-{}-{}'.format(self.exp_class.__name__, spec.group, time.time())
+          t_dir = os.path.join(trials_dir, name)
+          
+          os.makedirs(t_dir, exist_ok=True)
+          with open(os.path.join(t_dir, 'trial.yaml'), 'w') as f:
+            yaml.safe_dump({**trial, 'name': name, 'log_dir': t_dir},
+                           stream=f, default_flow_style=False)
+
+        yield trial

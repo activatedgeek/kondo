@@ -10,8 +10,7 @@
 
 The name is inspired by [Marie Kondo](https://konmari.com)'s tidying adventures.
 
-Throw away experiments that don't spark joy with this tiny framework agnostic
-module.
+Throw away experiments that don't spark joy with this tiny module.
 
 ## Installation
 
@@ -29,11 +28,11 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
 
 **NOTE**: Prefer pinning to a reference than the master branch for unintended updates.
 
-## Usage
+## Minimal Usage Example
 
 * Create new `Experiment` class
   ```python
-  from kondo import Experiment, RandIntType, ChoiceType
+  from kondo import Spec, Experiment, RandIntType, ChoiceType
 
   class MyExp(Experiment):
     def __init__(self, foo=100, bar='c', **kwargs):
@@ -47,10 +46,14 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
     @staticmethod
     def spec_list():
       return [
-        ('example', 3, dict(
-          foo=RandIntType(low=10, high=100),
-          bar=ChoiceType(['a', 'b', 'c']),
-        ))
+        Spec(
+          group='example',
+          params=dict(
+            foo=RandIntType(low=10, high=100),
+            bar=ChoiceType(['a', 'b', 'c'])
+          ),
+          n_trials=3,
+        )
       ]
   ```
   Make sure to capture all keyword arguments to the super class using `**kwargs`
@@ -86,13 +89,13 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
   Running experiment with foo=75, bar="c".
   ```
 
-* We can alternatively save this configurations for later use and load the experiment
-  on demand. We extend the above example by making the following calls
+* Additionally, we can alternatively save these configurations for later and load the experiment on demand. To enable saving, we simply pass the `trials_dir` argument to the `trials` method and everything else remains the same.
   ```python
   import os
 
   trials_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '.trials')
-  hparams.save_trials(trials_dir)
+  for trial in hparams.trials(trials_dir=trials_dir):
+    # ...same as earlier
   ```
 
   We then load all of the saved trials from the `YAML` files.
@@ -100,7 +103,7 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
   import glob
 
   for fname in glob.glob('{}/**/trial.yaml'.format(trials_dir)):
-    trial, _ = MyExp.load(fname, run=False)
+    trial = MyExp.load(fname, run=False)
 
     exp = MyExp(**trial)
     exp.run()
@@ -110,6 +113,11 @@ Now, you can keep tuning the spec during your hyperparameter search and *throw
 away the ones that don't spark joy*!.
 
 The full example file is available at [basic.py](./examples/basic.py).
+
+## Advanced Usage
+
+See [Experiment](./kondo/experiment.py) object for other important attributes.
+The only thing to care about are `@property` annotated methods.
 
 ## License
 
