@@ -49,13 +49,13 @@ class Experiment:
     '''
     raise NotImplementedError
 
-  def run():
+  def run(self):
     raise NotImplementedError
 
   @property
   def name(self) -> Optional[str]:
     return self._name
-  
+
   @property
   def seed(self) -> Optional[int]:
     return self._seed
