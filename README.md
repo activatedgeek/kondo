@@ -47,9 +47,17 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
     def spec_list():
       return [
         Spec(
-          group='example',
+          group='random',
           params=dict(
             foo=RandIntType(low=10, high=100),
+            bar=ChoiceType(['a', 'b', 'c'])
+          ),
+          n_trials=3,
+        ),
+        Spec(
+          group='fixed_foo',
+          params=dict(
+            foo=200,
             bar=ChoiceType(['a', 'b', 'c'])
           ),
           n_trials=3,
@@ -62,7 +70,7 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
 * Create `Hyperparameter` spec
   ```python
   from kondo import HParams
-  
+
   hparams = HParams(MyExp)
   ```
   `HParams` class automagically recognizes all the possible parameters to the
@@ -87,6 +95,7 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
   Running experiment with foo=93, bar="b".
   Running experiment with foo=30, bar="c".
   Running experiment with foo=75, bar="c".
+  ...
   ```
 
 * Additionally, we can alternatively save these configurations for later and load the experiment on demand. To enable saving, we simply pass the `trials_dir` argument to the `trials` method and everything else remains the same.
@@ -108,6 +117,13 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
     exp = MyExp(**trial)
     exp.run()
   ```
+
+* You can also generate trials from only a subset of groups by using the `groups` argument as
+  ```python
+  for trial in hparams.trials(groups=['fixed_foo']):
+    # ... same as earlier
+  ```
+  `ignore_groups` is a similar argument with the filtering out effect.
 
 Now, you can keep tuning the spec during your hyperparameter search and *throw
 away the ones that don't spark joy*!.

@@ -2,7 +2,7 @@ import os
 import time
 import inspect
 from ruamel import yaml
-from typing import Generator, Tuple
+from typing import Generator, Tuple, Optional, List
 
 from .param_types import ParamType
 
@@ -24,19 +24,28 @@ class HParams:
       argspec = inspect.getfullargspec(getattr(sup_c, '__init__'))
       argsdict = dict(dict(zip(argspec.args[1:], argspec.defaults or [])))
       attribs = {**attribs, **argsdict}
-    
+
     return attribs
 
   def sample(self) -> Tuple[dict, str]:
     for trial in self.trials():
       return trial
 
-  def trials(self, trials_dir=None) -> Generator[dict, None, None]:
+  def trials(self,
+             groups: Optional[List[str]] = None,
+             ignore_groups: Optional[List[str]] = None,
+             trials_dir: Optional[str] = None) -> Generator[dict, None, None]:
     if trials_dir is not None:
       trials_dir = os.path.abspath(trials_dir)
-      os.makedirs(trials_dir, exist_ok=True) 
+      os.makedirs(trials_dir, exist_ok=True)
 
     for spec in self.exp_class.spec_list():
+      if groups is not None and spec.group not in groups:
+        continue
+
+      if ignore_groups is not None and spec.group in ignore_groups:
+        continue
+
       rvs = {
         k: v.sample(size=spec.n_trials).tolist() if isinstance(v, ParamType) else v
         for k, v in spec.params.items()
@@ -51,7 +60,7 @@ class HParams:
         if trials_dir is not None:
           name = '{}-{}-{}'.format(self.exp_class.__name__, spec.group, time.time())
           t_dir = os.path.join(trials_dir, name)
-          
+
           os.makedirs(t_dir, exist_ok=True)
           with open(os.path.join(t_dir, 'trial.yaml'), 'w') as f:
             yaml.safe_dump({**trial, 'name': name, 'log_dir': t_dir},

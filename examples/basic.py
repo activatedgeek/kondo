@@ -20,9 +20,17 @@ class MyExp(Experiment):
   def spec_list():
     return [
       Spec(
-        group='example',
+        group='random',
         params=dict(
           foo=RandIntType(low=10, high=100),
+          bar=ChoiceType(['a', 'b', 'c'])
+        ),
+        n_trials=3,
+      ),
+      Spec(
+        group='fixed_foo',
+        params=dict(
+          foo=200,
           bar=ChoiceType(['a', 'b', 'c'])
         ),
         n_trials=3,
@@ -45,4 +53,11 @@ if __name__ == "__main__":
   for fname in glob.glob('{}/**/trial.yaml'.format(trials_dir)):
     exp = MyExp.load(fname)
 
+    exp.run()
+
+  print()
+
+  print('Generate only "fixed_foo" trials online...')
+  for trial in hparams.trials(groups=['fixed_foo']):
+    exp = MyExp(**trial)
     exp.run()
