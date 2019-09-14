@@ -19,9 +19,11 @@ jobs:
       python:
         - "3.6"
         - "3.7"
+      before_script:
+        - pip install pylint>=2.2
       script:
-        - pip install . -q
-        - python examples/basic.py
+        - python setup.py test
+        - pylint setup.py kondo tests examples
 
     - stage: deploy
       python:

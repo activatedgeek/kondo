@@ -1,7 +1,7 @@
 import os
 import random
 from ruamel import yaml
-from typing import Optional, Union, List, Tuple, NamedTuple
+from typing import Optional, Union, List, NamedTuple
 import numpy as np
 import torch
 from torch.utils.tensorboard import SummaryWriter
@@ -81,16 +81,16 @@ class Experiment:
     return self._logging.get('tb', Nop())
 
   @classmethod
-  def generate(exp_cls, trials_dir: str):
-    hparams = HParams(exp_cls)
+  def generate(cls, trials_dir: str):
+    hparams = HParams(cls)
     hparams.save_trials(trials_dir)
 
   @classmethod
-  def load(exp_cls, trial_file: str):
+  def load(cls, trial_file: str):
     with open(trial_file, 'r') as f:
       trial = yaml.safe_load(f)
 
-    exp = exp_cls(**trial)
+    exp = cls(**trial)
     return exp
 
   def _set_seeds(self, seed: Optional[int]) -> Optional[int]:
@@ -105,10 +105,11 @@ class Experiment:
     if self.log_dir:
       self._logging['tb'] = SummaryWriter(self.log_dir)
 
-  def _prep_workspace(self, log_dir: str, log_int: int = 100, ckpt_int: int = 100) -> dict:
+  def _prep_workspace(self, log_dir: str, log_int: int = 100,
+                      ckpt_int: int = 100) -> dict:
     logging = {
-      'log_int': log_int,
-      'ckpt_int': ckpt_int,
+        'log_int': log_int,
+        'ckpt_int': ckpt_int,
     }
 
     if log_dir:

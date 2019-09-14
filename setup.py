@@ -1,6 +1,7 @@
 import sys
 import os
 from setuptools import setup, find_packages
+from setuptools.command.test import test as TestCommand
 
 CURRENT_PYTHON = sys.version_info[:2]
 MIN_PYTHON = (3, 6)
@@ -28,6 +29,18 @@ else:
 with open('README.md') as f:
   README = f.read()
 
+class PyTest(TestCommand):
+  def initialize_options(self):
+    TestCommand.initialize_options(self)
+    self.pytest_args = ""
+
+  def run_tests(self):
+    import shlex
+    import pytest
+    errno = pytest.main(shlex.split(self.pytest_args))
+    sys.exit(errno)
+
+
 setup(name='kondo',
       description='Does your experiment spark joy?',
       long_description=README,
@@ -51,4 +64,8 @@ setup(name='kondo',
           'examples',
           'examples.*'
       ]),
-      install_requires=install_requires)
+      tests_require=[
+          'pytest>=4.2'
+      ],
+      install_requires=install_requires,
+      cmdclass={"test": PyTest})

@@ -2,7 +2,7 @@ import os
 import time
 import inspect
 from ruamel import yaml
-from typing import Generator, Tuple, Optional, List
+from typing import Generator, Optional, List
 
 from .param_types import ParamType
 
@@ -17,19 +17,15 @@ class HParams:
     return self._hparams
 
   @staticmethod
-  def prep(cls) -> dict:
+  def prep(exp_class) -> dict:
     attribs = {}
 
-    for sup_c in type.mro(cls)[::-1]:
+    for sup_c in type.mro(exp_class)[::-1]:
       argspec = inspect.getfullargspec(getattr(sup_c, '__init__'))
       argsdict = dict(dict(zip(argspec.args[1:], argspec.defaults or [])))
       attribs = {**attribs, **argsdict}
 
     return attribs
-
-  def sample(self) -> Tuple[dict, str]:
-    for trial in self.trials():
-      return trial
 
   def trials(self,
              groups: Optional[List[str]] = None,
@@ -47,18 +43,21 @@ class HParams:
         continue
 
       rvs = {
-        k: v.sample(size=spec.n_trials).tolist() if isinstance(v, ParamType) else v
-        for k, v in spec.params.items()
+          k: v.sample(size=spec.n_trials).tolist()
+             if isinstance(v, ParamType) else v
+          for k, v in spec.params.items()
       }
 
       for t in range(spec.n_trials):
         t_rvs = {k: v[t] if isinstance(v, list) else v
-                for k, v in rvs.items()}
+                 for k, v in rvs.items()}
 
         trial = {**self._hparams, **t_rvs}
 
         if trials_dir is not None:
-          name = '{}-{}-{}'.format(self.exp_class.__name__, spec.group, time.time())
+          name = '{}-{}-{}'.format(self.exp_class.__name__,
+                                   spec.group,
+                                   time.time())
           t_dir = os.path.join(trials_dir, name)
 
           os.makedirs(t_dir, exist_ok=True)
