@@ -1,5 +1,3 @@
-import os
-import glob
 # TODO(sanyam): Disables warnings from Tensorboard.
 import warnings
 warnings.filterwarnings('ignore', category=FutureWarning)
@@ -39,27 +37,19 @@ class MyExp(Experiment):
     ]
 
 if __name__ == "__main__":
-  trials_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                            '.trials')
-
   hparams = HParams(MyExp)
 
-  print('Generate trials online and save...')
-  for trial in hparams.trials(trials_dir=trials_dir):
+  print('Generate trials online...')
+  for _, trial in hparams.trials():
     exp = MyExp(**trial)
-    exp.run()
 
-  print()
-
-  print('Run pre-generated trials...')
-  for fname in glob.glob('{}/**/trial.yaml'.format(trials_dir)):
-    exp = MyExp.load(fname)
+    print('Auto generated CLI', ' '.join(hparams.to_argv(trial)))
 
     exp.run()
 
   print()
 
   print('Generate only "fixed_foo" trials online...')
-  for trial in hparams.trials(groups=['fixed_foo']):
+  for _, trial in hparams.trials(groups=['fixed_foo']):
     exp = MyExp(**trial)
     exp.run()

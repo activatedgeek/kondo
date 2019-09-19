@@ -1,7 +1,5 @@
-import os
 import time
 import inspect
-from ruamel import yaml
 from typing import Generator, Optional, List
 
 from .param_types import ParamType
@@ -29,12 +27,8 @@ class HParams:
 
   def trials(self,
              groups: Optional[List[str]] = None,
-             ignore_groups: Optional[List[str]] = None,
-             trials_dir: Optional[str] = None) -> Generator[dict, None, None]:
-    if trials_dir is not None:
-      trials_dir = os.path.abspath(trials_dir)
-      os.makedirs(trials_dir, exist_ok=True)
-
+             ignore_groups: Optional[List[str]] = None) \
+             -> Generator[dict, None, None]:
     for spec in self.exp_class.spec_list():
       if groups is not None and spec.group not in groups:
         continue
@@ -52,17 +46,24 @@ class HParams:
         t_rvs = {k: v[t] if isinstance(v, list) else v
                  for k, v in rvs.items()}
 
+        name = '{}-{}-{}'.format(self.exp_class.__name__,
+                                 spec.group,
+                                 time.time())
+
         trial = {**self._hparams, **t_rvs}
 
-        if trials_dir is not None:
-          name = '{}-{}-{}'.format(self.exp_class.__name__,
-                                   spec.group,
-                                   time.time())
-          t_dir = os.path.join(trials_dir, name)
+        yield name, trial
 
-          os.makedirs(t_dir, exist_ok=True)
-          with open(os.path.join(t_dir, 'trial.yaml'), 'w') as f:
-            yaml.safe_dump({**trial, 'name': name, 'log_dir': t_dir},
-                           stream=f, default_flow_style=False)
+  @staticmethod
+  def to_argv(trial: dict) -> List[str]:
+    argv = []
+    for k, v in trial.items():
+      if v is not None:
+        arg = '--{}'.format(k)
 
-        yield trial
+        if not isinstance(v, bool):
+          arg = '{}={}'.format(arg, v)
+
+        argv.append(arg)
+
+    return argv

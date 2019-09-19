@@ -25,14 +25,12 @@ class Spec(NamedTuple):
 
 class Experiment:
   def __init__(self,
-               name: Optional[str] = None,
                seed: Optional[int] = None,
                cuda: bool = True,
                log_dir: Optional[str] = None,
                log_int: int = 100,
                ckpt_int: int = 100):
 
-    self._name = name
     self._seed = self._set_seeds(seed)
 
     self._cuda = bool(cuda) and torch.cuda.is_available()
@@ -51,10 +49,6 @@ class Experiment:
 
   def run(self):
     raise NotImplementedError
-
-  @property
-  def name(self) -> Optional[str]:
-    return self._name
 
   @property
   def seed(self) -> Optional[int]:

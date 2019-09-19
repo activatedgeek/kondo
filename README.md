@@ -98,26 +98,6 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
   ...
   ```
 
-* Additionally, we can alternatively save these configurations for later and load the experiment on demand. To enable saving, we simply pass the `trials_dir` argument to the `trials` method and everything else remains the same.
-  ```python
-  import os
-
-  trials_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '.trials')
-  for trial in hparams.trials(trials_dir=trials_dir):
-    # ...same as earlier
-  ```
-
-  We then load all of the saved trials from the `YAML` files.
-  ```python
-  import glob
-
-  for fname in glob.glob('{}/**/trial.yaml'.format(trials_dir)):
-    trial = MyExp.load(fname, run=False)
-
-    exp = MyExp(**trial)
-    exp.run()
-  ```
-
 * You can also generate trials from only a subset of groups by using the `groups` argument as
   ```python
   for trial in hparams.trials(groups=['fixed_foo']):
@@ -133,7 +113,8 @@ The full example file is available at [basic.py](./examples/basic.py).
 ## Advanced Usage
 
 See [Experiment](./kondo/experiment.py) object for other important attributes.
-The only thing to care about are `@property` annotated methods.
+The only thing to care about are `@property` annotated methods, especially the
+ones for logging.
 
 ## License
 
