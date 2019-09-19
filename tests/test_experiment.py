@@ -13,6 +13,17 @@ def test_trial_count():
   assert trial_count == total_trials
 
 
+def test_trial_unique_name():
+  hparams = HParams(Experimental)
+
+  total_trials = sum([spec.n_trials for spec in Experimental.spec_list()])
+  trials = []
+  for name, _ in hparams.trials():
+    trials.append(name)
+
+  assert len(set(trials)) == total_trials
+
+
 def test_trial_filter():
   hparams = HParams(Experimental)
 

@@ -1,4 +1,5 @@
-import time
+from time import strftime
+from uuid import uuid4
 import inspect
 from typing import Generator, Optional, List
 
@@ -46,9 +47,10 @@ class HParams:
         t_rvs = {k: v[t] if isinstance(v, list) else v
                  for k, v in rvs.items()}
 
-        name = '{}-{}-{}'.format(self.exp_class.__name__,
-                                 spec.group,
-                                 time.time())
+        name = '{}-{}--{}--{}'.format(self.exp_class.__name__,
+                                      spec.group,
+                                      strftime('%m-%d-%Y-%H-%M-%S'),
+                                      str(uuid4())[:8])
 
         trial = {**self._hparams, **t_rvs}
 

@@ -1,6 +1,5 @@
 import os
 import random
-from ruamel import yaml
 from typing import Optional, Union, List, NamedTuple
 import numpy as np
 import torch
@@ -78,14 +77,6 @@ class Experiment:
   def generate(cls, trials_dir: str):
     hparams = HParams(cls)
     hparams.save_trials(trials_dir)
-
-  @classmethod
-  def load(cls, trial_file: str):
-    with open(trial_file, 'r') as f:
-      trial = yaml.safe_load(f)
-
-    exp = cls(**trial)
-    return exp
 
   def _set_seeds(self, seed: Optional[int]) -> Optional[int]:
     if seed:
