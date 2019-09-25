@@ -12,7 +12,7 @@ def test_argv():
   trial = {
       'foo': 1,
       'bar': 'something',
-      'foobar': False,
+      'foobar': True,
       'blah': None
   }
 
@@ -26,3 +26,18 @@ def test_argv():
   assert '--bar=something' in argv
   assert '--foobar' in argv
   assert '--blah' not in argv
+
+
+def test_argv2():
+  trial = {
+      'foo': 1,
+      'bar': 'something',
+      'foobar': False,
+      'blah': None
+  }
+
+  argv = HParams.to_argv(trial)
+  str_argv = ' '.join(argv)
+
+  assert '--foobar' not in str_argv
+  assert '--foobar' not in argv

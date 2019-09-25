@@ -61,11 +61,14 @@ class HParams:
     argv = []
     for k, v in trial.items():
       if v is not None:
-        arg = '--{}'.format(k)
+        arg = ''
+        if isinstance(v, bool):
+          if v is True:
+            arg = '--{}'.format(k)
+        else:
+          arg = '--{}={}'.format(k, v)
 
-        if not isinstance(v, bool):
-          arg = '{}={}'.format(arg, v)
-
-        argv.append(arg)
+        if arg:
+          argv.append(arg)
 
     return argv
