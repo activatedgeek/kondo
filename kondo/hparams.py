@@ -4,6 +4,7 @@ import inspect
 from typing import Generator, Optional, List
 
 from .param_types import ParamType
+from .utils import Spec
 
 
 class HParams:
@@ -26,6 +27,26 @@ class HParams:
 
     return attribs
 
+  def resolve_spec(self, spec: Spec):
+    rvs = {
+        k: v.sample(size=spec.n_trials).tolist()
+           if isinstance(v, ParamType) else v
+        for k, v in spec.params.items()
+    }
+
+    for t in range(spec.n_trials):
+      t_rvs = {k: v[t] if isinstance(v, list) else v
+               for k, v in rvs.items()}
+
+      name = '{}-{}--{}--{}'.format(self.exp_class.__name__,
+                                    spec.group,
+                                    strftime('%m-%d-%Y-%H-%M-%S'),
+                                    str(uuid4())[:8])
+
+      trial = {**self._hparams, **t_rvs}
+
+      yield name, trial
+
   def trials(self,
              groups: Optional[List[str]] = None,
              ignore_groups: Optional[List[str]] = None) \
@@ -37,24 +58,7 @@ class HParams:
       if ignore_groups is not None and spec.group in ignore_groups:
         continue
 
-      rvs = {
-          k: v.sample(size=spec.n_trials).tolist()
-             if isinstance(v, ParamType) else v
-          for k, v in spec.params.items()
-      }
-
-      for t in range(spec.n_trials):
-        t_rvs = {k: v[t] if isinstance(v, list) else v
-                 for k, v in rvs.items()}
-
-        name = '{}-{}--{}--{}'.format(self.exp_class.__name__,
-                                      spec.group,
-                                      strftime('%m-%d-%Y-%H-%M-%S'),
-                                      str(uuid4())[:8])
-
-        trial = {**self._hparams, **t_rvs}
-
-        yield name, trial
+      yield from self.resolve_spec(spec)
 
   @staticmethod
   def to_argv(trial: dict) -> List[str]:

@@ -1,25 +1,12 @@
 import os
 import random
-from typing import Optional, Union, List, NamedTuple
+from typing import Optional, Union, List
 import numpy as np
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
 from .hparams import HParams
-
-class Nop:
-  """A NOP class. Give it anything."""
-  def nop(self, *args, **kwargs):
-    pass
-
-  def __getattr__(self, _):
-    return self.nop
-
-
-class Spec(NamedTuple):
-  group: str
-  params: dict
-  n_trials: int = 0
+from .utils import Nop, Spec
 
 
 class Experiment:
