@@ -12,14 +12,13 @@ from .utils import Nop, Spec
 class Experiment:
   def __init__(self,
                seed: Optional[int] = None,
-               cuda: bool = True,
                log_dir: Optional[str] = None,
                log_int: int = 100,
                ckpt_int: int = 100):
 
     self._seed = self._set_seeds(seed)
 
-    self._cuda = bool(cuda) and torch.cuda.is_available()
+    self._cuda = torch.cuda.is_available()
 
     self._logging = self._prep_workspace(log_dir, log_int, ckpt_int)
     self._init_logger()
@@ -41,7 +40,7 @@ class Experiment:
     return self._seed
 
   @property
-  def cuda(self) -> Optional[bool]:
+  def cuda(self) -> bool:
     return self._cuda
 
   @property
