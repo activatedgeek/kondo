@@ -1,7 +1,8 @@
+import math
 from time import strftime
 from uuid import uuid4
 import inspect
-from typing import Generator, Optional, List
+from typing import Generator, Optional, List, Tuple
 
 from .param_types import ParamType
 from .utils import Spec
@@ -27,21 +28,24 @@ class HParams:
 
     return attribs
 
-  def resolve_spec(self, spec: Spec):
+  def resolve_spec(self, spec: Spec) -> Generator[Tuple[str, dict], None, None]:
     rvs = {
         k: v.sample(size=spec.n_trials).tolist()
            if isinstance(v, ParamType) else v
         for k, v in spec.params.items()
     }
 
+    uuid_str = str(uuid4())[:8]
+    time_str = strftime('%Y_%m_%d-%H_%M_%S')
+    n_pad = int(math.log10(spec.n_trials)) + 1
+
     for t in range(spec.n_trials):
       t_rvs = {k: v[t] if isinstance(v, list) else v
                for k, v in rvs.items()}
 
-      name = '{}-{}--{}--{}'.format(self.exp_class.__name__,
-                                    spec.group,
-                                    strftime('%m-%d-%Y-%H-%M-%S'),
-                                    str(uuid4())[:8])
+      name = '{cls_name}-{group}-{time_str}-{t:0{n_pad}d}-{uuid_str}'.format(
+          t=t + 1, n_pad=n_pad, cls_name=self.exp_class.__name__,
+          group=spec.group, time_str=time_str, uuid_str=uuid_str)
 
       trial = {**self._hparams, **t_rvs}
 
@@ -50,7 +54,7 @@ class HParams:
   def trials(self,
              groups: Optional[List[str]] = None,
              ignore_groups: Optional[List[str]] = None) \
-             -> Generator[dict, None, None]:
+             -> Generator[Tuple[str, dict], None, None]:
     for spec in self.exp_class.spec_list():
       if groups is not None and spec.group not in groups:
         continue

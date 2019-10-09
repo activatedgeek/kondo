@@ -40,10 +40,11 @@ if __name__ == "__main__":
   hparams = HParams(MyExp)
 
   print('Generate trials online...')
-  for _, trial in hparams.trials():
+  for name, trial in hparams.trials():
     exp = MyExp(**trial)
 
-    print('Auto generated CLI', ' '.join(hparams.to_argv(trial)))
+    print('Auto generated CLI args for', name, ':',
+          ' '.join(hparams.to_argv(trial)))
 
     exp.run()
 

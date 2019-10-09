@@ -82,7 +82,7 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
 
 * Generate trials and create a new experiment each time
   ```python
-  for trial, _ in hparams.trials():
+  for _, trial in hparams.trials():
     exp = MyExp(**trial)
     exp.run()
   ```
