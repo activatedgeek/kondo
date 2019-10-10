@@ -116,6 +116,8 @@ See [Experiment](./kondo/experiment.py) object for other important attributes.
 The only thing to care about are `@property` annotated methods, especially the
 ones for logging.
 
+The [tests](./kondo/tests) directory is a good place to discover all possibilities.
+
 ## License
 
 Apache 2.0

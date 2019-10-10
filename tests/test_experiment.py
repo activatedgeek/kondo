@@ -1,4 +1,4 @@
-from kondo import HParams
+from kondo import HParams, Spec
 from . import Experimental
 
 
@@ -60,3 +60,27 @@ def test_trial_ignore_filter():
     assert trial['foo'] == 100
     assert trial['bar'] == 'c'
     assert 3.0 <= trial['foobar'] <= 4.0
+
+
+def test_custom_spec_func():
+  hparams = HParams(Experimental)
+
+  def spec_list():
+    return [
+        Spec(
+            group='custom',
+            params=dict(
+                foo=121,
+                bar='e',
+                foobar=2.0,
+            ),
+            n_trials=99,
+        ),
+    ]
+
+  total_trials = sum([spec.n_trials for spec in spec_list()])
+  trials = []
+  for name, _ in hparams.trials(spec_func=spec_list):
+    trials.append(name)
+
+  assert len(set(trials)) == total_trials

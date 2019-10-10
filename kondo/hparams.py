@@ -2,7 +2,7 @@ import math
 from time import strftime
 from uuid import uuid4
 import inspect
-from typing import Generator, Optional, List, Tuple
+from typing import Generator, Optional, List, Tuple, Callable
 
 from .param_types import ParamType
 from .utils import Spec
@@ -53,9 +53,12 @@ class HParams:
 
   def trials(self,
              groups: Optional[List[str]] = None,
-             ignore_groups: Optional[List[str]] = None) \
+             ignore_groups: Optional[List[str]] = None,
+             spec_func: Optional[Callable[[], List[Spec]]] = None) \
              -> Generator[Tuple[str, dict], None, None]:
-    for spec in self.exp_class.spec_list():
+
+    spec_func = spec_func or self.exp_class.spec_list
+    for spec in spec_func():
       if groups is not None and spec.group not in groups:
         continue
 
