@@ -5,8 +5,8 @@ import numpy as np
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
-from .hparams import HParams
-from .utils import Nop, Spec
+from .hparams import HParams, Spec
+from .utils import Nop
 
 
 class Experiment:
