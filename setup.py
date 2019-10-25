@@ -15,9 +15,6 @@ if CURRENT_PYTHON < MIN_PYTHON:
   """.format(*CURRENT_PYTHON, *MIN_PYTHON))
   sys.exit(1)
 
-with open('requirements.txt', 'r') as f:
-  install_requires = f.readlines()
-
 if os.path.isfile('VERSION'):
   with open('VERSION') as f:
     VERSION = f.read()
@@ -67,5 +64,8 @@ setup(name='kondo',
       tests_require=[
           'pytest>=4.2'
       ],
-      install_requires=install_requires,
+      install_requires=[],
+      extras_require={
+          'all': ['numpy', 'torch', 'tensorflow']
+      },
       cmdclass={"test": PyTest})

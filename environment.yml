@@ -6,5 +6,5 @@ dependencies:
   - python=3.7
   - future
   - numpy
-  - pytorch=1.2.*
-  - tensorflow=1.14.*
+  - pytorch
+  - tensorflow
