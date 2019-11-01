@@ -44,7 +44,7 @@ class Spec:
   @staticmethod
   def get_unique_suffix():
     uuid_str = str(uuid4())[:8]
-    time_str = strftime('%Y_%m_%d-%H_%M_%S')
+    time_str = strftime('%b%d-%H%M%S')
     return '{}-{}'.format(uuid_str, time_str)
 
   def resolve(self, base_hparams: Optional[dict] = None,
