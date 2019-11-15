@@ -21,6 +21,7 @@ class MyExp(Experiment):
         Spec(
             group='random',
             params=dict(
+                seed=20,
                 foo=RandIntType(low=10, high=100),
                 bar=ChoiceType(['a', 'b', 'c'])
             ),
@@ -39,18 +40,12 @@ class MyExp(Experiment):
 if __name__ == "__main__":
   hparams = HParams(MyExp)
 
-  print('Generate trials online...')
+  print('Generating trials online...\n')
   for name, trial in hparams.trials():
-    exp = MyExp(**trial)
+    MyExp(**trial).run()
+    print()
 
-    print('Auto generated CLI args for', name, ':',
-          ' '.join(hparams.to_argv(trial)))
-
-    exp.run()
-
-  print()
-
-  print('Generate only "fixed_foo" trials online...')
+  print('Generating only "fixed_foo" trials online...\n')
   for _, trial in hparams.trials(groups=['fixed_foo']):
-    exp = MyExp(**trial)
-    exp.run()
+    MyExp(**trial).run()
+    print()

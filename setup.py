@@ -3,17 +3,6 @@ import os
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
-CURRENT_PYTHON = sys.version_info[:2]
-MIN_PYTHON = (3, 6)
-
-if CURRENT_PYTHON < MIN_PYTHON:
-  sys.stderr.write("""
-      ============================
-      Unsupported Python Version
-      ============================
-      Python {}.{} is unsupported. Please use a version newer than Python {}.{}.
-  """.format(*CURRENT_PYTHON, *MIN_PYTHON))
-  sys.exit(1)
 
 if os.path.isfile('VERSION'):
   with open('VERSION') as f:
@@ -61,11 +50,12 @@ setup(name='kondo',
           'examples',
           'examples.*'
       ]),
+      python_requires='>=3.6, <4',
       tests_require=[
           'pytest>=4.2'
       ],
-      install_requires=[],
+      install_requires=['numpy'],
       extras_require={
-          'all': ['numpy', 'torch', 'tensorflow']
+          'all': ['torch', 'tensorflow']
       },
       cmdclass={"test": PyTest})

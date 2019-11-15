@@ -20,7 +20,7 @@ jobs:
       python: "3.6"
       before_script:
         - pip install 'astroid>=2.2,<2.3' 'pylint>=2.3,<2.4'
-        - pip install .[all]
+        - pip install .
       script:
         - python setup.py test
         - pylint setup.py kondo tests examples

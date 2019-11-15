@@ -1,5 +1,22 @@
 from kondo import HParams, Spec
+from kondo.utils import Nop
 from . import Experimental
+
+
+def test_simple_attrs():
+  exp = Experimental(seed=1)
+  assert exp.seed == 1
+  assert not exp.cuda
+  assert exp.log_dir is None
+  assert isinstance(exp.logger, Nop)
+  assert exp.log_interval == 100
+  assert exp.ckpt_interval == 100
+  assert isinstance(exp.params_acc, dict)
+  assert len(exp.params_acc.keys()) == 1
+
+  exp.params_acc = dict(newparam='newparam')
+
+  assert len(exp.params_acc.keys()) == 2
 
 
 def test_trial_count():
