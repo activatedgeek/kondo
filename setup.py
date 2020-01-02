@@ -1,7 +1,5 @@
-import sys
 import os
 from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
 
 
 if os.path.isfile('VERSION'):
@@ -14,17 +12,6 @@ else:
 
 with open('README.md') as f:
   README = f.read()
-
-class PyTest(TestCommand):
-  def initialize_options(self):
-    TestCommand.initialize_options(self)
-    self.pytest_args = ""
-
-  def run_tests(self):
-    import shlex
-    import pytest
-    errno = pytest.main(shlex.split(self.pytest_args))
-    sys.exit(errno)
 
 
 setup(name='kondo',
@@ -56,6 +43,6 @@ setup(name='kondo',
       ],
       install_requires=['numpy'],
       extras_require={
+          'test': ['pytest>=4.2'],
           'all': ['torch', 'tensorflow']
-      },
-      cmdclass={"test": PyTest})
+      })

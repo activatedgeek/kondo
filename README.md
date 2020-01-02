@@ -100,7 +100,7 @@ pip install git+https://github.com/activatedgeek/kondo.git@master
 
 * You can also generate trials from only a subset of groups by using the `groups` argument as
   ```python
-  for trial in hparams.trials(groups=['fixed_foo']):
+  for _, trial in hparams.trials(groups=['fixed_foo']):
     # ... same as earlier
   ```
   `ignore_groups` is a similar argument with the filtering out effect.
