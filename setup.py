@@ -38,11 +38,8 @@ setup(name='kondo',
           'examples.*'
       ]),
       python_requires='>=3.6, <4',
-      tests_require=[
-          'pytest>=4.2'
-      ],
       install_requires=['numpy'],
       extras_require={
-          'test': ['pytest>=4.2'],
-          'all': ['torch', 'tensorflow']
+          'test': ['pytest', 'pylint'],
+          'bo': ['ax-platform', 'sqlalchemy']
       })

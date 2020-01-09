@@ -19,8 +19,7 @@ jobs:
       stage: test
       python: "3.6"
       before_script:
-        - pip install 'astroid>=2.2,<2.3' 'pylint>=2.3,<2.4'
-        - pip install .[test]
+        - pip install -e .[test,bo]
       script:
         - pytest
         - pylint setup.py kondo tests examples

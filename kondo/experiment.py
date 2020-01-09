@@ -81,7 +81,7 @@ class Experiment:
       np.random.seed(seed)
 
       try:
-        import torch
+        import torch  # pylint: disable=import-outside-toplevel
         torch.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
       except ModuleNotFoundError:
@@ -91,7 +91,7 @@ class Experiment:
 
   def _find_cuda(self) -> bool:
     try:
-      import torch
+      import torch  # pylint: disable=import-outside-toplevel
       return torch.cuda.is_available()
     except ModuleNotFoundError:
       logging.warning('"cuda" set to `False` because "import torch" failed.')
@@ -101,7 +101,7 @@ class Experiment:
     logger = None
     if log_dir:
       try:
-        from torch.utils.tensorboard import SummaryWriter
+        from torch.utils.tensorboard import SummaryWriter  # pylint: disable=import-outside-toplevel
         log_dir = os.path.abspath(log_dir)
         logger = SummaryWriter(log_dir)
       except ModuleNotFoundError:

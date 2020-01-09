@@ -7,6 +7,7 @@ import inspect
 from typing import Generator, Optional, List, Tuple, Callable
 
 from .param_types import ParamType
+from .utils import to_argv
 
 
 class Spec:
@@ -112,17 +113,4 @@ class HParams:
 
   @staticmethod
   def to_argv(trial: dict) -> List[str]:
-    argv = []
-    for k, v in trial.items():
-      if v is not None:
-        arg = ''
-        if isinstance(v, bool):
-          if v is True:
-            arg = '--{}'.format(k)
-        else:
-          arg = '--{}={}'.format(k, v)
-
-        if arg:
-          argv.append(arg)
-
-    return argv
+    return to_argv(trial)
