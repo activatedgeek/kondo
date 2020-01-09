@@ -1,8 +1,8 @@
-from kondo.utils import exhaust_dict, to_argv, Nop
+from kondo.utils import exhaust_params, to_argv, Nop
 
 
 def test_empty():
-  assert len(list(exhaust_dict({}))) == 0
+  assert len(list(exhaust_params({}))) == 0
 
 
 def test_lists():
@@ -12,7 +12,7 @@ def test_lists():
       y=['a', 'b', 'c', 'd']
   )
 
-  trials = list(exhaust_dict(test_dict))
+  trials = list(exhaust_params(test_dict))
 
   combs = 1
   for _, v in test_dict.items():
@@ -33,7 +33,7 @@ def test_scalar_vals():
       two=2.0
   )
 
-  trials = list(exhaust_dict(test_dict))
+  trials = list(exhaust_params(test_dict))
 
   combs = 1
   for _, v in test_dict.items():

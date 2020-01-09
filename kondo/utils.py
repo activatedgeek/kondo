@@ -2,7 +2,7 @@ import itertools
 from typing import Generator, List
 
 
-def exhaust_dict(params: dict) \
+def exhaust_params(params: dict) \
   -> Generator[dict, None, None]:
   '''Compute cross-product of all lists.
   '''
