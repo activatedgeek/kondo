@@ -11,12 +11,6 @@ def test_simple_attrs():
   assert isinstance(exp.logger, Nop)
   assert exp.log_interval == 100
   assert exp.ckpt_interval == 100
-  assert isinstance(exp.params_acc, dict)
-  assert len(exp.params_acc.keys()) == 1
-
-  exp.params_acc = dict(newparam='newparam')
-
-  assert len(exp.params_acc.keys()) == 2
 
 
 def test_trial_count():

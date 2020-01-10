@@ -23,8 +23,6 @@ class Experiment:
     self._log_int = log_int
     self._ckpt_int = ckpt_int
 
-    self._params_accum = dict(seed=self._seed)
-
   @staticmethod
   def spec_list() -> List[Spec]:
     '''
@@ -60,20 +58,6 @@ class Experiment:
   @property
   def logger(self) -> Union[Any, Nop]:
     return self._logger or Nop()
-
-  @property
-  def params_acc(self) -> dict:
-    assert isinstance(self._params_accum, dict), \
-      'did you forget to call super()?'
-
-    return self._params_accum
-
-  @params_acc.setter
-  def params_acc(self, newparams: dict):
-    assert isinstance(self._params_accum, dict), \
-      'did you forget to call super()?'
-
-    self._params_accum.update(newparams)
 
   def _set_seeds(self, seed: Optional[int]) -> Optional[int]:
     if seed:

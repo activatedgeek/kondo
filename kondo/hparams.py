@@ -3,11 +3,10 @@ import itertools
 from collections import defaultdict
 from time import strftime
 from uuid import uuid4
-import inspect
 from typing import Generator, Optional, List, Tuple, Callable
 
 from .param_types import ParamType
-from .utils import to_argv
+from .utils import to_argv, read_params_from_class
 
 
 class Spec:
@@ -76,22 +75,11 @@ class Spec:
 class HParams:
   def __init__(self, exp_class):
     self.exp_class = exp_class
-    self._hparams = self.prep(exp_class)
+    self._hparams = read_params_from_class(exp_class)
 
   @property
   def hparams(self) -> dict:
     return self._hparams
-
-  @staticmethod
-  def prep(exp_class) -> dict:
-    attribs = {}
-
-    for sup_c in type.mro(exp_class)[::-1]:
-      argspec = inspect.getfullargspec(getattr(sup_c, '__init__'))
-      argsdict = dict(dict(zip(argspec.args[1:], argspec.defaults or [])))
-      attribs = {**attribs, **argsdict}
-
-    return attribs
 
   def trials(self,
              groups: Optional[List[str]] = None,

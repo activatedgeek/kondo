@@ -1,5 +1,33 @@
 import itertools
-from typing import Generator, List
+import inspect
+from typing import Generator, List, Dict
+
+
+
+def read_params_from_class(cls_object, ax_params=False) -> List[Dict]:
+  '''Read all default arguments from a class constructor.
+
+  NOTE: also follows parents.
+  '''
+  attribs = {}
+
+  for sup_c in type.mro(cls_object)[::-1]:
+    argspec = inspect.getfullargspec(getattr(sup_c, '__init__'))
+    argsdict = dict(dict(zip(argspec.args[1:], argspec.defaults or [])))
+    attribs = {**attribs, **argsdict}
+
+  # Ignore all keys with null values.
+  attribs = {k: v for k, v in attribs.items() if v is not None}
+
+  # generate a list of fixed parameters in
+  # Adaptive Experimentation framework format.
+  if ax_params:
+    attribs = [
+        dict(name=k, type='fixed', value=v)
+        for k, v in attribs.items()
+    ]
+
+  return attribs
 
 
 def exhaust_params(params: dict) \
